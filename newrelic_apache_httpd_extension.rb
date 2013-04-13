@@ -19,7 +19,7 @@ module ApacheHTTPDAgent
   class Agent < NewRelic::Plugin::Agent::Base
 	
    		
-	agent_config_options :hostname, :username, :password, :port, :agent_name
+	agent_config_options :hostname, :username, :password, :port, :agent_name, :debug
     agent_guid "com.newrelic.examples.apache.httpd"
     agent_version "0.0.1"
 	    
@@ -33,33 +33,33 @@ module ApacheHTTPDAgent
     agent_human_labels("ApacheHTTPD") { "#{hostname}" }
 
     def setup_metrics
-    	@@APACHE_STAT_URL = URI.parse("http://#{hostname}/server-status?auto")
-		@@metric_types = Hash.new("ms")  
-	    @@metric_types["Total Accesses"] = "accesses"
-		@@metric_types["Total kBytes"] = "kb"
-		@@metric_types["CPULoad"] = "%"
-		@@metric_types["Uptime"] = "sec"
-		@@metric_types["ReqPerSec"] = "requests"
-		@@metric_types["BytesPerSec"] = "bytes/sec"
-		@@metric_types["BytesPerReq"] = "bytes/req"
-		@@metric_types["BusyWorkers"] = "workers"
-		@@metric_types["IdleWorkers"] = "workers"
-		@@metric_types["ConnsTotal"] = "connections"
-		@@metric_types["ConnsAsyncWriting"] = "connections"
-		@@metric_types["ConnsAsyncKeepAlive"] = "connections"
-		@@metric_types["ConnsAsyncClosing"] = "connections"
-		@@metric_types["Scoreboard/WaitingForConnection"] = "workers"
-		@@metric_types["Scoreboard/StartingUp"] = "workers"
-		@@metric_types["Scoreboard/ReadingRequest"] = "workers"
-		@@metric_types["Scoreboard/SendingReply"] = "workers"
-		@@metric_types["Scoreboard/KeepAliveRead"] = "workers"
-		@@metric_types["Scoreboard/DNSLookup"] = "workers"
-		@@metric_types["Scoreboard/ClosingConnection"] = "workers"
-		@@metric_types["Scoreboard/Logging"] = "workers"
-		@@metric_types["Scoreboard/GracefullyFinishing"] = "workers"
-		@@metric_types["Scoreboard/IdleCleanupOfWorker"] = "workers"
-		@@metric_types["Scoreboard/OpenSlotWithNoCurrentProcess"] = "workers"
- 		@@scoreboard_values = Hash["_", "WaitingForConnection", "S", "StartingUp", "R", "ReadingRequest", "W", "SendingReply", "K", "KeepAliveRead", "D", "DNSLookup", "C", "ClosingConnection", "L", "Logging", "G", "GracefullyFinishing", "I", "IdleCleanupOfWorker", ".", "OpenSlotWithNoCurrentProcess"]
+      @@APACHE_STAT_URL = URI.parse("http://#{hostname}/server-status?auto")
+  		@@metric_types = Hash.new("ms")  
+  	  @@metric_types["Total Accesses"] = "accesses"
+  		@@metric_types["Total kBytes"] = "kb"
+  		@@metric_types["CPULoad"] = "%"
+  		@@metric_types["Uptime"] = "sec"
+  		@@metric_types["ReqPerSec"] = "requests"
+  		@@metric_types["BytesPerSec"] = "bytes/sec"
+  		@@metric_types["BytesPerReq"] = "bytes/req"
+  		@@metric_types["BusyWorkers"] = "workers"
+  		@@metric_types["IdleWorkers"] = "workers"
+  		@@metric_types["ConnsTotal"] = "connections"
+  		@@metric_types["ConnsAsyncWriting"] = "connections"
+  		@@metric_types["ConnsAsyncKeepAlive"] = "connections"
+  		@@metric_types["ConnsAsyncClosing"] = "connections"
+  		@@metric_types["Scoreboard/WaitingForConnection"] = "workers"
+  		@@metric_types["Scoreboard/StartingUp"] = "workers"
+  		@@metric_types["Scoreboard/ReadingRequest"] = "workers"
+  		@@metric_types["Scoreboard/SendingReply"] = "workers"
+  		@@metric_types["Scoreboard/KeepAliveRead"] = "workers"
+  		@@metric_types["Scoreboard/DNSLookup"] = "workers"
+  		@@metric_types["Scoreboard/ClosingConnection"] = "workers"
+  		@@metric_types["Scoreboard/Logging"] = "workers"
+  		@@metric_types["Scoreboard/GracefullyFinishing"] = "workers"
+  		@@metric_types["Scoreboard/IdleCleanupOfWorker"] = "workers"
+  		@@metric_types["Scoreboard/OpenSlotWithNoCurrentProcess"] = "workers"
+   		@@scoreboard_values = Hash["_", "WaitingForConnection", "S", "StartingUp", "R", "ReadingRequest", "W", "SendingReply", "K", "KeepAliveRead", "D", "DNSLookup", "C", "ClosingConnection", "L", "Logging", "G", "GracefullyFinishing", "I", "IdleCleanupOfWorker", ".", "OpenSlotWithNoCurrentProcess"]
     end
 
     def poll_cycle
@@ -78,8 +78,11 @@ module ApacheHTTPDAgent
       	else 
       		mout = "#{mout}/#{mtree}"
       	end
-      	report_metric "#{mout}", @@metric_types[mtree], stats[mtree]
-      	# puts("#{mout} | #{@@metric_types[mtree]} | #{stats[mtree]}")	
+      	if "#{debug}" == "true"
+          puts("#{mout}[#{@@metric_types[mtree]}]: #{stats[mtree]}")  
+      	else
+      	  report_metric "#{mout}", @@metric_types[mtree], stats[mtree]      	  
+      	end
       }
     rescue => e
       $stderr.puts "#{e}: #{e.backtrace.join("\n  ")}"
@@ -99,21 +102,20 @@ module ApacheHTTPDAgent
       	stats = Hash.new
         lines.each { |line| 
         	marray = line.split(": ")
-        	# puts("mname: #{marray[0]} mvalue: #{marray[1]}")
         	if marray[0] == "Scoreboard"
         		@@scoreboard_values.each { |sk, sv| 
-					mcount = marray[1].count sk
-       				sn = "#{marray[0]}/#{sv}"
-					stats[sn] = mcount 
-				}
+    					mcount = marray[1].count sk
+           		sn = "#{marray[0]}/#{sv}"
+    					stats[sn] = mcount 
+    				}
         	else
         		stats["#{marray[0]}"] = marray[1]
         	end
         }
-		return stats
+		  return stats
     end  
   end
-
+  
   NewRelic::Plugin::Setup.install_agent :apachehttpd, self
 
   # Launch the agent; this never returns.

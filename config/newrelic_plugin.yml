@@ -5,7 +5,7 @@ newrelic:
   #
   # Update with your New Relic account license key:
   #
-  license_key: 'e7b3d85ce615a352af9cf55aa0dcae67d05a2076'
+  license_key: 'YOUR_LICENSE_KEY_HERE'
   #
   # Set to '1' for verbose output, remove for normal output.
   # All output goes to stdout/stderr.
@@ -17,3 +17,5 @@ newrelic:
 agents:
   apachehttpd:
       hostname: httpd.apache.org
+      # Enable "debug: true" to see metrics in stdout instead of sent to New Relic"
+      # debug: false
