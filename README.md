@@ -9,8 +9,10 @@ New Relic Apache HTTPD Extension
 2. Go to: https://github.com/newrelic-platform/newrelic_apache_httpd_extension.git
 3. Download and extract the source to a local directory
 4. Run `bundle install` in the directory with this source
-5. Edit `config/newrelic_plugin.yml` and replace "YOUR_LICENSE_KEY_HERE" with your New Relic license key
-6. Edit `config/newrelic_plugin.yml` and replace "httpd.apache.org" with the hostname of your Apache HTTPD server
+5. Copy `config/template_newrelic_plugin.yml' to `config/newrelic_plugin.yml`
+6. Edit `config/newrelic_plugin.yml` and replace:
+	* 'YOUR_LICENSE_KEY_HERE' with your New Relic license key (in ' ')
+	* "httpd.apache.org" with the hostname of your Apache HTTPD server
 7. Execute `./newrelic_apache_httpd_extension.rb`
 8. Go back to the Extensions list, after a brief period you will see an entry for the Apache HTTPD Extension
 
