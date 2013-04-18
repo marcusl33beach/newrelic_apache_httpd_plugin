@@ -12,11 +12,23 @@ newrelic:
   # All output goes to stdout/stderr.
   #
   # verbose: 1
-#
+  #
 # Agent Configuration:
+#
+# Enable "debug: true" to see metrics in stdout instead of sent to New Relic"
+# Enable "extended_stats: true" to collect metrics from the human-readable server-status page"
+# "hostport" can be left blank if port 80.
 #
 agents:
   apachehttpd:
-      hostname: httpd.apache.org
-      # Enable "debug: true" to see metrics in stdout instead of sent to New Relic"
-      # debug: true
+      -
+        hostname: www.server1.com
+        hostport: 80
+        debug: true
+        extended_stats: true
+      -
+        hostname: httpd.apache.org
+        hostport:
+        debug: true
+        extended_stats: true
+
