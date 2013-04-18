@@ -34,7 +34,7 @@ module ApacheHTTPDAgent
 
     def setup_metrics
       if !self.hostport then self.hostport = 80 end
-        
+
       @apache_stat_url = URI.parse("http://#{self.hostname}:#{self.hostport}/server-status?auto")
       @apache_stat_extended_url = URI.parse("http://#{self.hostname}:#{self.hostport}/server-status")
       @apache_stat_file = "samples/apachestats-example.txt"
@@ -79,56 +79,53 @@ module ApacheHTTPDAgent
       @scoreboard_values["I"] = "IdleCleanupOfWorker"
       @scoreboard_values["."] = "OpenSlotWithNoCurrentProcess"
 
-      @extended_metrics = Array.new
-      @extended_metrics << { table: "SSLCache", number: 0, name: "CacheType", type: "string" }
-      @extended_metrics << { table: "SSLCache", number: 1, name: "SharedMemory", type: "bytes" }
-      @extended_metrics << { table: "SSLCache", number: 2, name: "CurrentEntries", type: "entries" }
-      @extended_metrics << { table: "SSLCache", number: 3, name: "Subcaches", type: "subcaches" }
-      @extended_metrics << { table: "SSLCache", number: 4, name: "IndexesPerSubCache", type: "indexes" }
-      @extended_metrics << { table: "SSLCache", number: 5, name: "TimeLeftOnOldestEntriesObjects", type: "sec" }
-      @extended_metrics << { table: "SSLCache", number: 6, name: "IndexUsage", type: "uses" }
-      @extended_metrics << { table: "SSLCache", number: 7, name: "CacheUsage", type: "uses" }
-      @extended_metrics << { table: "SSLCache", number: 8, name: "TotalEntriesStored", type: "entries" }
-      @extended_metrics << { table: "SSLCache", number: 9, name: "TotalEntriesReplaced", type: "entries" }
-      @extended_metrics << { table: "SSLCache", number: 10, name: "TotalEntriesExpired", type: "entries" }
-      @extended_metrics << { table: "SSLCache", number: 11, name: "TotalEntriesScrolledOut", type: "entries" }
-      @extended_metrics << { table: "SSLCache", number: 12, name: "TotalRetrievesHit", type: "hits" }
-      @extended_metrics << { table: "SSLCache", number: 13, name: "TotalRetrievesMiss", type: "misses" }
-      @extended_metrics << { table: "SSLCache", number: 14, name: "TotalRemovesHit", type: "hits" }
-      @extended_metrics << { table: "SSLCache", number: 15, name: "TotalRemovesMis", type: "misses" }
-      @sslarray = ["CacheType"]
+      @extended_metric_types = Hash.new("ms")
+      @extended_metric_types["AccessesThisChild"] = "accesses"
+      @extended_metric_types["AccessesThisConnection"] = "accesses"
+      @extended_metric_types["AccessesThisSlot"] = "accesses"
+      @extended_metric_types["AsyncConnsClosing"] = "connections"
+      @extended_metric_types["AsyncConnsKeepAlive"] = "connections"
+      @extended_metric_types["AsyncConnsWriting"] = "connections"
+      @extended_metric_types["CacheType"] = "string"
+      @extended_metric_types["CacheUsage"] = "uses"
+      @extended_metric_types["ChildServerNumber"] = "string"
+      @extended_metric_types["ClientIP"] = "string"
+      @extended_metric_types["ConnectionsAccepting"] = "boolean"
+      @extended_metric_types["ConnectionsTotal"] = "connections"
+      @extended_metric_types["CPUUsage"] = "sec"
+      @extended_metric_types["CurrentEntries"] = "entries"
+      @extended_metric_types["IndexesPerSubCache"] = "indexes"
+      @extended_metric_types["IndexUsage"] = "uses"
+      @extended_metric_types["KilobytesTransferredThisConnection"] = "kb"
+      @extended_metric_types["LastRequestProcessTime"] = "ms"
+      @extended_metric_types["MegabytesTransferredThisChild"] = "mb"
+      @extended_metric_types["MegabytesTransferredThisSlot"] = "mb"
+      @extended_metric_types["PID"] = "string"
+      @extended_metric_types["RequestContents"] = "string"
+      @extended_metric_types["SecSinceLastRequest"] = "sec"
+      @extended_metric_types["SharedMemory"] = "bytes"
+      @extended_metric_types["Subcaches"] = "subcaches"
+      @extended_metric_types["ThreadsBusy"] = "threads"
+      @extended_metric_types["ThreadsIdle"] = "threads"
+      @extended_metric_types["TimeLeftOnOldestEntriesObjects"] = "sec"
+      @extended_metric_types["TotalEntriesExpired"] = "entries"
+      @extended_metric_types["TotalEntriesReplaced"] = "entries"
+      @extended_metric_types["TotalEntriesScrolledOut"] = "entries"
+      @extended_metric_types["TotalEntriesStored"] = "entries"
+      @extended_metric_types["TotalRemovesHit"] = "hits"
+      @extended_metric_types["TotalRemovesMis"] = "misses"
+      @extended_metric_types["TotalRetrievesHit"] = "hits"
+      @extended_metric_types["TotalRetrievesMiss"] = "misses"
+      @extended_metric_types["VHost"] = "string"
+      @extended_metric_types["WorkerModeOfOperation"] = "workers"
 
-      @extended_metrics << { table: "Requests", number: 0, name: "ChildServerNumber", type: "string" }
-      @extended_metrics << { table: "Requests", number: 1, name: "PID", type: "string" }
-      @extended_metrics << { table: "Requests", number: 2, name: "AccessesThisConnection", type: "accesses" }
-      @extended_metrics << { table: "Requests", number: 3, name: "AccessesThisChild", type: "accesses" }
-      @extended_metrics << { table: "Requests", number: 4, name: "AccessesThisSlot", type: "accesses" }
-      @extended_metrics << { table: "Requests", number: 5, name: "WorkerModeOfOperation", type: "workers" }
-      @extended_metrics << { table: "Requests", number: 6, name: "CPUUsage", type: "sec" }
-      @extended_metrics << { table: "Requests", number: 7, name: "SecSinceLastRequest", type: "sec" }
-      @extended_metrics << { table: "Requests", number: 8, name: "LastRequestProcessTime", type: "ms" }
-      @extended_metrics << { table: "Requests", number: 9, name: "KilobytesTransferredThisConnection", type: "kb" }
-      @extended_metrics << { table: "Requests", number: 10, name: "MegabytesTransferredThisChild", type: "mb" }
-      @extended_metrics << { table: "Requests", number: 11, name: "MegabytesTransferredThisSlot", type: "mb" }
-      @extended_metrics << { table: "Requests", number: 12, name: "ClientIP", type: "string" }
-      @extended_metrics << { table: "Requests", number: 13, name: "VHost", type: "string" }
-      @extended_metrics << { table: "Requests", number: 14, name: "RequestContents", type: "string" }
-      @reqarray = ["PID", "VHost"]
-
-      @extended_metrics << { table: "WebServers", number: 0, name: "PID", type: "string" }
-      @extended_metrics << { table: "WebServers", number: 1, name: "ConnectionsTotal", type: "connections" }
-      @extended_metrics << { table: "WebServers", number: 2, name: "ConnectionsAccepting", type: "boolean" }
-      @extended_metrics << { table: "WebServers", number: 3, name: "ThreadsBusy", type: "threads" }
-      @extended_metrics << { table: "WebServers", number: 4, name: "ThreadsIdle", type: "threads" }
-      @extended_metrics << { table: "WebServers", number: 5, name: "AsyncConnsWriting", type: "connections" }
-      @extended_metrics << { table: "WebServers", number: 6, name: "AsyncConnsKeepAlive", type: "connections" }
-      @extended_metrics << { table: "WebServers", number: 7, name: "AsyncConnsClosing", type: "connections" }
-      @wsarray = ["PID"]
-
+      @ssl_metrics=["CacheType", "SharedMemory", "CurrentEntries", "Subcaches", "IndexesPerSubCache", "TimeLeftOnOldestEntriesObjects", "IndexUsage", "CacheUsage", "TotalEntriesStored", "TotalEntriesReplaced", "TotalEntriesExpired", "TotalEntriesScrolledOut", "TotalRetrievesHit", "TotalRetrievesMiss", "TotalRemovesHit", "TotalRemovesMiss"]
+      @req_metrics=["ChildServerNumber", "PID", "AccessesThisConnection", "AccessesThisChild", "AccessesThisSlot", "WorkerModeOfOperation", "CPUUsage", "SecSinceLastRequest", "LastRequestProcessTime", "KilobytesTransferredThisConnection", "MegabytesTransferredThisChild", "MegabytesTransferredThisSlot", "ClientIP", "VHost", "RequestContents"]
+      @ws_metrics=["PID", "ConnectionsTotal", "ConnectionsAccepting", "ThreadsBusy", "ThreadsIdle", "AsyncConnsWriting", "AsyncConnsKeepAlive", "AsyncConnsClosing"]
     end
 
     def poll_cycle
-      apache_httpd_stats()  
+      apache_httpd_stats()
       if "#{extended_stats}" == "true"
         if "#{debug}" == "true" then puts("Reporting Extended Stats") end
         apache_httpd_extended_stats()
@@ -138,6 +135,25 @@ module ApacheHTTPDAgent
     end
 
     private
+
+    def get_stats(staturl, statfile)
+      lines = Array.new
+      begin
+        if "#{self.testrun}" == "true"
+          flines = File.open(statfile, "r")
+          flines.each {|l| lines << l}
+        flines.close
+        else
+          if "#{self.debug}" == "true" then puts("URL: #{staturl}") end
+          resp = ::Net::HTTP.get_response(staturl)
+          data = resp.body
+          lines = data.split("\n")
+        end
+      rescue => e
+        $stderr.puts "#{e}: #{e.backtrace.join("\n  ")}"
+      end
+      return lines
+    end
 
     def apache_httpd_stats
       lines = get_stats @apache_stat_url, @apache_stat_file
@@ -161,76 +177,83 @@ module ApacheHTTPDAgent
     end
 
     def apache_httpd_extended_stats
-      @workers = Hash.new
       line1 = line2 = line3 = nil
-      stats = Hash.new
+      wsstats = Array.new
+      sslstats = Array.new
+      reqstats = Array.new
 
       lines = get_stats @apache_stat_extended_url, @apache_stat_extended_file
       if lines.empty? then return end
 
       lines.each { |line|
 
-        ### Web Servers (by PID) Table
-        # 1: PID
-        # 2: Connections Total
-        # 3: Connections Accepting (yes/no)
-        # 4: Threads Busy
-        # 5: Threads Idle
-        # 6: AsyncConns Writing
-        # 7: AsyncConns Keep-Alive
-        # 8: AsyncConns Closing
-        pidsmatch = line.match(/\<tr\>\<td\>(\d+)\<\/td\>\<td\>(\d+)\<\/td\>\<td\>(\w+)\<\/td\>\<td\>(\d+)\<\/td\>\<td\>(\d+)\<\/td\>\<td\>(\d+)\<\/td\>\<td\>(\d+)\<\/td\>\<td\>(\d+)\<\/td\>\<\/tr\>/)
-        if !pidsmatch.nil? then process_extended_stats(pidsmatch.captures, "WebServers", @wsarray)
-        next end
-
-        ### VHosts Seconds Since Last Used Table
-        # 1. VHost & Port
-        # 2: Seconds Since Last Used
+      ### VHosts Seconds Since Last Used Table
+      # 1. VHost & Port
+      # 2: Seconds Since Last Used
         secmatch = line.match(/\<tr\>\<td\>\<pre\>([^<]+)\<\/pre\>\<\/td\>\<td\>\<pre\>\s*(\d+)\<\/pre\>\<\/td\>\<\/tr\>/)
         if !secmatch.nil? then report_metric_check_debug "HTTPD/VHosts/#{secmatch[1]}/SecondsSinceLastUsed", "sec", secmatch[2]
         next end
 
+        ### Web Servers (by PID) Table
+        # 0: PID
+        # 1: Connections Total
+        # 2: Connections Accepting (yes/no)
+        # 3: Threads Busy
+        # 4: Threads Idle
+        # 5: AsyncConns Writing
+        # 6: AsyncConns Keep-Alive
+        # 7: AsyncConns Closing
+        pidsmatch = line.match(/\<tr\>\<td\>(\d+)\<\/td\>\<td\>(\d+)\<\/td\>\<td\>(\w+)\<\/td\>\<td\>(\d+)\<\/td\>\<td\>(\d+)\<\/td\>\<td\>(\d+)\<\/td\>\<td\>(\d+)\<\/td\>\<td\>(\d+)\<\/td\>\<\/tr\>/)
+        if !pidsmatch.nil? then wsstats << pidsmatch.captures
+        # process_extended_stats(pidsmatch.captures, "WebServers", @wsarray)
+        next end
+
         ### SSL Cache Table
-        # This table is multiple lines in the page but is in 1 line in the HTML, hence the horrifically long regex
-        # 1: Cache Type (this is a string)
-        # 2: Shared Memory (bytes)
-        # 3: Current Entries
-        # 4: Subcaches
-        # 5: Indexes Per Subcache
-        # 6: Time left on oldest entries' objects (average - seconds)
-        # 7: Index Usage
-        # 8: Cache Usage
-        # 9: total entries stored since starting
-        # 10: total entries replaced since starting
-        # 11: total entries expired since starting
-        # 12: total (pre-expiry) entries scrolled out of the cache
-        # 13: total retrieves since starting (hit)
-        # 14: total retrieves since starting (miss)
-        # 15: total removes since starting (hit)
-        # 16: total removes since starting (miss)
+        # This table is multiple lines in the page but is in 1 line in the HTML,
+        # hence the horrifically long regex
+        # 0: Cache Type (this is a string)
+        # 1: Shared Memory (bytes)
+        # 2: Current Entries
+        # 3: Subcaches
+        # 4: Indexes Per Subcache
+        # 5: Time left on oldest entries' objects (average - seconds)
+        # 6: Index Usage
+        # 7: Cache Usage
+        # 8: total entries stored since starting
+        # 9: total entries replaced since starting
+        # 10: total entries expired since starting
+        # 11: total (pre-expiry) entries scrolled out of the cache
+        # 12: total retrieves since starting (hit)
+        # 13: total retrieves since starting (miss)
+        # 14: total removes since starting (hit)
+        # 15: total removes since starting (miss)
         sslmatch = line.match(/[^<]+\<b\>([^<]+)\<\/b\>[^<]+\<b\>(\d+)\<\/b\>[^<]+\<b\>(\d+)\<\/b\>\<br\>[^<]+\<b\>(\d+)\<\/b\>[^<]+\<b\>(\d+)\<\/b\>\<br\>[^<]+\<b\>(\d+)\<\/b\>[^<]+\<br\>[^<]+\<b\>(\d+)%\<\/b\>[^<]+\<b\>(\d+)%\<\/b\>\<br\>[^<]+\<b\>(\d+)\<\/b\>\<br\>[^<]+\<b\>(\d+)\<\/b\>\<br\>[^<]+\<b\>(\d+)\<\/b\>\<br\>[^<]+\<b\>(\d+)\<\/b\>\<br\>[^<]+\<b\>(\d+)\<\/b\>[^<]+\<b\>(\d+)\<\/b\>[^<]+\<br\>[^<]+\<b\>(\d+)\<\/b\>[^<]+\<b\>(\d+)<\/b\>[^<]+\<br\>\<\/td\>\<\/tr\>/)
-        if !sslmatch.nil? then process_extended_stats(sslmatch.captures, "SSLCache", @sslarray)
+        if !sslmatch.nil? then sslstats << sslmatch.captures
+        #process_extended_stats(sslmatch.captures, "SSLCache", @sslarray)
         next end
 
         ### Requests Table
-        # This appears as 3 lines in the HTML code itself, although it is 1 line in the table
-        # As 3 consectuive lines must match to be used, all other matching will occur above this.
-        # For 2nd grouping in line 1 (PID), only look for numbers, ignore "-", thus will only report live servers (with a PID)
-        #line1[1]: Child Server number - generation
-        #line1[2]: OS process ID
-        #line1[3]: Number of accesses - this connection
-        #line1[4]: Number of accesses - this child
-        #line1[5]: Number of accesses - this slot
-        #line1[6]: Worker mode of operation
-        #line2[1]: CPU usage, number of seconds
-        #line2[2]: Seconds since beginning of most recent request
-        #line2[3]: Milliseconds required to process most recent request
-        #line2[4]: Kilobytes transferred this connection
-        #line2[5]: Megabytes transferred this child
-        #line2[6]: Total megabytes transferred this slot
-        #line3[1]: Client IP (if available)
-        #line3[2]: Virtual Host & Port (if available)
-        #line3[3]: Request Contents (if available)
+        # This appears as 3 lines in the HTML code itself, although it is 1 line
+        # in the table
+        # As 3 consectuive lines must match to be used, all other matching will
+        # occur above this.
+        # For 2nd grouping in line 1 (PID), only look for numbers, ignore "-",
+        # thus will only report live servers (with a PID)
+        # 0: line1[1]: Child Server number - generation
+        # 1: line1[2]: OS process ID
+        # 2: line1[3]: Number of accesses - this connection
+        # 3: line1[4]: Number of accesses - this child
+        # 4: line1[5]: Number of accesses - this slot
+        # 5: line1[6]: Worker mode of operation
+        # 6: line2[1]: CPU usage, number of seconds
+        # 7: line2[2]: Seconds since beginning of most recent request
+        # 8: line2[3]: Milliseconds required to process most recent request
+        # 9: line2[4]: Kilobytes transferred this connection
+        # 10: line2[5]: Megabytes transferred this child
+        # 11: line2[6]: Total megabytes transferred this slot
+        # 12: line3[1]: Client IP (if available)
+        # 13: line3[2]: Virtual Host & Port (if available)
+        # 14: line3[3]: Request Contents (if available)
         if line1.nil? then line1 = line.match(/\<tr\>\<td\>\<b\>([0-9\-]+)<\/b><\/td><td>(\d+)<\/td><td>(\d+)\/(\d+)\/(\d+)<\/td><td>([_SRWKDCLGI.]+)/)
         elsif line2.nil? then line2 = line.match(/\<\/td\>\<td\>([0-9.]+)\<\/td\>\<td\>(\d+)\<\/td\>\<td\>(\d+)\<\/td\>\<td\>([0-9.]+)\<\/td\>\<td\>([0-9.]+)\<\/td\>\<td\>([0-9.]+)/)
         elsif line3.nil? then line3 = line.match(/<\/td><td>(\d+\.\d+\.\d+\.\d+)<\/td><td[^>]*>([a-zA-Z0-9.:]*)<\/td><td[^>]*>(.*)<\/td><\/tr>/) end
@@ -238,15 +261,19 @@ module ApacheHTTPDAgent
         if !line1.nil? && !line2.nil? && !line3.nil?
           # Concatenate all 3 match lines into one big array to process/report.
           reqmatch = line1.captures.concat(line2.captures.concat(line3.captures))
-          process_extended_stats(reqmatch, "Requests", @reqarray)
+          reqstats << reqmatch
+          # process_extended_stats(reqmatch, "Requests", @reqarray)
           # Clear contents of 3 line matches after they've been processed
           line1 = line2 = line3 = nil
         end
       }
-      if !@workers.empty? then @workers.each { |wk, wv| report_metric_check_debug wk, "workers", wv } end
+
+      if !reqstats.empty? then process_extended_stats reqstats, "Requests", @req_metrics, ["PID", "VHost"] end
+      if !sslstats.empty? then process_extended_stats sslstats, "SSLCache", @ssl_metrics, ["CacheType"] end
+      if !wsstats.empty? then process_extended_stats wsstats, "WebServers", @ws_metrics, ["PID"] end
     end
-    
-    def process_stats(statshash) 
+
+    def process_stats(statshash)
       statshash.each_key { |mtree|
         mout = "HTTPD"
         if "#{mtree}".start_with?("Scoreboard")
@@ -264,25 +291,31 @@ module ApacheHTTPDAgent
         report_metric_check_debug "#{mout}", "#{@metric_types[mtree]}", statshash[mtree]
       }
     end
-    
-    def process_extended_stats(statsarray, statstablename, titlearray)
+
+    def process_extended_stats(thesestats, statstablename, statsarray, titlearray)
       statsout = Hash.new
-      statbase = "HTTPD/#{statstablename}"
-      titlearray.each{ |t|
-        mindex = @extended_metrics.detect { |m| m[:table] == "#{statstablename}" && m[:name] == "#{t}"}
-        if !mindex.nil?
-          if "#{statsarray[mindex[:number]]}" == "" then statbase = statbase + "/No" + "#{t}"
-          else statbase = statbase + "/" + "#{statsarray[mindex[:number]]}" end
-        end
+      workersout = Hash.new
+
+      thesestats.each{|stat|
+        statbase = "HTTPD/#{statstablename}"
+        titlearray.each{ |t|
+          metricindex = statsarray.index("#{t}")
+          if !metricindex.nil?
+            if "#{stat[metricindex]}" == "" then statbase = statbase + "/No" + "#{t}"
+            else statbase = statbase + "/" + "#{stat[metricindex]}" end
+          end
+        }
+        stat.each_index { |sindex|
+          stattype = @extended_metric_types[statsarray[sindex]]
+          if "#{stattype}" == "workers"
+            workerstring = "#{statbase}/#{statsarray[sindex]}/#{@scoreboard_values["#{stat[sindex]}"]}"
+          if workersout[workerstring].nil? then workersout[workerstring] = 1
+          else workersout[workerstring] = workersout[workerstring] + 1 end
+          elsif "#{stattype}" != "string" then report_metric_check_debug "#{statbase}/#{statsarray[sindex]}", "#{stattype}", stat[sindex] end
+        }
       }
-      statsarray.each_index { |i|
-        thisstat = @extended_metrics.detect { |s| s[:table] == "#{statstablename}" && s[:number] == i}
-        if "#{thisstat[:type]}" == "workers"
-          workerstring = "#{statbase}/#{thisstat[:name]}/#{@scoreboard_values["#{statsarray[i]}"]}"
-          if @workers[workerstring].nil? then @workers[workerstring] = 1
-          else @workers[workerstring] = @workers[workerstring] + 1 end
-        elsif "#{thisstat[:type]}" != "string" then report_metric_check_debug "#{statbase}/#{thisstat[:name]}", "#{thisstat[:type]}", statsarray[i] end
-      }
+
+      if !workersout.empty? then workersout.each { |wk, wv| report_metric_check_debug wk, "workers", wv } end
     end
 
     def report_metric_check_debug(metricname, metrictype, metricvalue)
@@ -297,27 +330,8 @@ module ApacheHTTPDAgent
         report_metric metricname, metrictype, metricvalue
       end
     end
-
-    def get_stats(staturl, statfile)
-      lines = Array.new
-      begin
-        if "#{self.testrun}" == "true"
-          flines = File.open(statfile, "r")
-          flines.each {|l| lines << l}
-        flines.close
-        else
-          if "#{self.debug}" == "true" then puts("URL: #{staturl}") end
-          resp = ::Net::HTTP.get_response(staturl)
-          data = resp.body
-          lines = data.split("\n")
-        end
-      rescue => e
-        $stderr.puts "#{e}: #{e.backtrace.join("\n  ")}"
-      end
-      return lines
-    end
   end
-
+  
   NewRelic::Plugin::Setup.install_agent :apachehttpd, self
 
   # Launch the agent; this never returns.
