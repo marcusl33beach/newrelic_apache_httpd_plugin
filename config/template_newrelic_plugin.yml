@@ -22,13 +22,21 @@ newrelic:
 agents:
   apachehttpd:
       -
-        hostname: www.server1.com
+        hostname: www.yourserver.com
         hostport: 80
-        debug: true
+        # Set "debug: true" to see metrics in stdout instead of sent to New Relic"
+        debug: false
+        # Set "testrun: true" to use input from local text/html files. Only parses input once, then quits.
+        testrun: false
+        # Set "extended_stats: true" to parse stats from human-readable version of server-status
         extended_stats: true
       -
         hostname: httpd.apache.org
-        hostport:
-        debug: true
+        hostport: 80
+        # Set "debug: true" to see metrics in stdout instead of sent to New Relic"
+        debug: false
+        # Set "testrun: true" to use input from local text/html files. Only parses input once, then quits.
+        testrun: false
+        # Set "extended_stats: true" to parse stats from human-readable version of server-status
         extended_stats: true
 
