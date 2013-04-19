@@ -29,8 +29,8 @@ module ApacheHTTPDAgent
 
     # The block runs in the context of the agent instance.
     #
-    if !"#{:hostport}".empty? then agent_human_labels("ApacheHTTPD") { "#{hostname}:#{hostport}" }
-    else agent_human_labels("ApacheHTTPD") { "#{hostname}" } end
+    if !:hostport.empty? then agent_human_labels("ApacheHTTPD") { "#{hostname}:#{hostport}" }
+    else agent_human_labels("ApacheHTTPD") { hostname } end
 
     def setup_metrics
       if !self.hostport then self.hostport = 80 end
@@ -126,12 +126,12 @@ module ApacheHTTPDAgent
 
     def poll_cycle
       apache_httpd_stats()
-      if "#{extended_stats}" == "true"
-        if "#{debug}" == "true" then puts("Reporting Extended Stats") end
+      if "#{self.extended_stats}" == "true"
+        if "#{self.debug}" == "true" then puts("Reporting Extended Stats") end
         apache_httpd_extended_stats()
       end
       # Only do testruns once, then quit
-      if "#{testrun}" == "true" then exit end
+      if "#{self.testrun}" == "true" then exit end
     end
 
     private
@@ -169,7 +169,7 @@ module ApacheHTTPDAgent
             stats[sn] = mcount
           }
         else
-          stats["#{marray[0]}"] = marray[1]
+          stats[marray[0]] = marray[1]
         end
       }
 
@@ -274,44 +274,54 @@ module ApacheHTTPDAgent
     end
 
     def process_stats(statshash)
-      statshash.each_key { |mtree|
-        mout = "HTTPD"
-        if "#{mtree}".start_with?("Scoreboard")
-          mout = "#{mout}/#{mtree}"
-        elsif @metric_types[mtree] == "workers"
-          mout = "#{mout}/Workers/#{mtree}"
-        elsif @metric_types[mtree] == "connections"
-          mout = "#{mout}/Connections/#{mtree}"
-        elsif @metric_types[mtree] == "%"
-          statshash[mtree] = 100 * statshash[mtree].to_f
-          mout = "#{mout}/#{mtree}"
+      statshash.each_key { |skey|
+        statstree = "HTTPD"
+        case 
+        when skey.start_with?("Scoreboard")
+          statstree = "#{statstree}/#{skey}"
+        when @metric_types[skey] == "workers"
+          statstree = "#{statstree}/Workers/#{skey}"
+        when @metric_types[skey] == "connections"
+          statstree = "#{statstree}/Connections/#{skey}"
+        when @metric_types[skey] == "%"
+          statshash[skey] = 100 * statshash[skey].to_f
+          statstree = "#{statstree}/#{skey}"
         else
-          mout = "#{mout}/#{mtree}"
+          statstree = "#{statstree}/#{skey}"
         end
-        report_metric_check_debug "#{mout}", "#{@metric_types[mtree]}", statshash[mtree]
+        report_metric_check_debug statstree, @metric_types[skey], statshash[skey]
       }
     end
 
     def process_extended_stats(thesestats, statstablename, statsarray, titlearray)
-      statsout = Hash.new
       workersout = Hash.new
-
-      thesestats.each{|stat|
+      thesestats.each{|s|
         statbase = "HTTPD/#{statstablename}"
         titlearray.each{ |t|
-          metricindex = statsarray.index("#{t}")
-          if !metricindex.nil?
-            if "#{stat[metricindex]}" == "" then statbase = statbase + "/No" + "#{t}"
-            else statbase = statbase + "/" + "#{stat[metricindex]}" end
+          t_index = statsarray.index(t)
+          if !t_index.nil?
+            if s[t_index] == "" then statbase = "#{statbase}/No#{t}"
+            else statbase = "#{statbase}/#{s[t_index]}" end
           end
         }
-        stat.each_index { |sindex|
-          stattype = @extended_metric_types[statsarray[sindex]]
-          if "#{stattype}" == "workers"
-            workerstring = "#{statbase}/#{statsarray[sindex]}/#{@scoreboard_values["#{stat[sindex]}"]}"
-          if workersout[workerstring].nil? then workersout[workerstring] = 1
-          else workersout[workerstring] = workersout[workerstring] + 1 end
-          elsif "#{stattype}" != "string" then report_metric_check_debug "#{statbase}/#{statsarray[sindex]}", "#{stattype}", stat[sindex] end
+        s.each_index { |s_index|
+          stattype = @extended_metric_types[statsarray[s_index]]
+          case stattype
+          when "workers"
+            workerstring = "#{statbase}/#{statsarray[s_index]}/#{@scoreboard_values[s[s_index]]}"
+            if workersout[workerstring].nil? then workersout[workerstring] = 1
+            else workersout[workerstring] = workersout[workerstring] + 1 end
+          when "boolean"
+              if s[s_index] == "yes" then s[s_index] = "1"
+              else s[s_index] = "0" end
+              statname = "#{statbase}/#{statsarray[s_index]}"
+              report_metric_check_debug statname, stattype, s[s_index]
+          when "string"
+            # Do nothing with strings for now.
+          else
+            statname = "#{statbase}/#{statsarray[s_index]}"
+            report_metric_check_debug statname, stattype, s[s_index]
+          end
         }
       }
 
@@ -319,11 +329,6 @@ module ApacheHTTPDAgent
     end
 
     def report_metric_check_debug(metricname, metrictype, metricvalue)
-      if "#{metrictype}" == "boolean"
-        if "#{metricvalue}" == "yes" then metricvalue = "1"
-        else metricvalue = "0"
-        end
-      end
       if "#{self.debug}" == "true"
         puts("#{metricname}[#{metrictype}] : #{metricvalue}")
       else
