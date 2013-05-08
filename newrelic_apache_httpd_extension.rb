@@ -268,7 +268,7 @@ module ApacheHTTPDAgent
         end
       }
 
-      if !reqstats.empty? then process_extended_stats reqstats, "Requests", @req_metrics, ["PID", "VHost"] end
+      if !reqstats.empty? then process_extended_stats reqstats, "Requests", @req_metrics, ["VHost"] end
       if !sslstats.empty? then process_extended_stats sslstats, "SSLCache", @ssl_metrics, ["CacheType"] end
       if !wsstats.empty? then process_extended_stats wsstats, "WebServers", @ws_metrics, ["PID"] end
     end
