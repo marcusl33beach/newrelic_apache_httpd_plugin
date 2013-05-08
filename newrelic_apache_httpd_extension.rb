@@ -29,8 +29,8 @@ module ApacheHTTPDAgent
 
     # The block runs in the context of the agent instance.
     #
-    if !:hostport.empty? then agent_human_labels("ApacheHTTPD") { "#{hostname}:#{hostport}" }
-    else agent_human_labels("ApacheHTTPD") { hostname } end
+    if :hostport then agent_human_labels("ApacheHTTPD") { "#{hostname}:#{hostport}" }
+    else agent_human_labels("ApacheHTTPD") { "#{hostname}:80" } end
 
     def setup_metrics
       if !self.hostport then self.hostport = 80 end
