@@ -1,9 +1,9 @@
-newrelic_apache_httpd_Plugin
+newrelic_apache_httpd_plugin
 ===============================
 
 New Relic Plugin for Apache HTTPD
 
-### Instructions for running the Extension
+### Instructions for running the plugin
 
 1. Enable mod_status on your Apache HTTPD server: http://bit.ly/14kiUGI
 2. Go to: https://github.com/newrelic-platform/newrelic_apache_httpd_plugin.git
@@ -17,6 +17,7 @@ New Relic Plugin for Apache HTTPD
 8. Go back to the Plugins list, after a brief period you will see an entry called `HTTPD`
 
 #### Notes / Tips
+
 * Ensure that the server-status page (http://[hostname]/server-status) is reachable from where you are running this extension.
 * If not accessible, check the security settings for mod_status. It can restrict users with authentication or by IP.
 * The current version of this extension does not support authentication with mod_status.
