@@ -1,0 +1,43 @@
+      @extended_metrics << { table: "SSLCache", number: 0, name: "CacheType", type: "string" }
+      @extended_metrics << { table: "SSLCache", number: 1, name: "SharedMemory", type: "bytes" }
+      @extended_metrics << { table: "SSLCache", number: 2, name: "CurrentEntries", type: "entries" }
+      @extended_metrics << { table: "SSLCache", number: 3, name: "Subcaches", type: "subcaches" }
+      @extended_metrics << { table: "SSLCache", number: 4, name: "IndexesPerSubCache", type: "indexes" }
+      @extended_metrics << { table: "SSLCache", number: 5, name: "TimeLeftOnOldestEntriesObjects", type: "sec" }
+      @extended_metrics << { table: "SSLCache", number: 6, name: "IndexUsage", type: "uses" }
+      @extended_metrics << { table: "SSLCache", number: 7, name: "CacheUsage", type: "uses" }
+      @extended_metrics << { table: "SSLCache", number: 8, name: "TotalEntriesStored", type: "entries" }
+      @extended_metrics << { table: "SSLCache", number: 9, name: "TotalEntriesReplaced", type: "entries" }
+      @extended_metrics << { table: "SSLCache", number: 10, name: "TotalEntriesExpired", type: "entries" }
+      @extended_metrics << { table: "SSLCache", number: 11, name: "TotalEntriesScrolledOut", type: "entries" }
+      @extended_metrics << { table: "SSLCache", number: 12, name: "TotalRetrievesHit", type: "hits" }
+      @extended_metrics << { table: "SSLCache", number: 13, name: "TotalRetrievesMiss", type: "misses" }
+      @extended_metrics << { table: "SSLCache", number: 14, name: "TotalRemovesHit", type: "hits" }
+      @extended_metrics << { table: "SSLCache", number: 15, name: "TotalRemovesMis", type: "misses" }
+      @sslarray = ["CacheType"]
+
+      @extended_metrics << { table: "Requests", number: 0, name: "ChildServerNumber", type: "string" }
+      @extended_metrics << { table: "Requests", number: 1, name: "PID", type: "string" }
+      @extended_metrics << { table: "Requests", number: 2, name: "AccessesThisConnection", type: "accesses" }
+      @extended_metrics << { table: "Requests", number: 3, name: "AccessesThisChild", type: "accesses" }
+      @extended_metrics << { table: "Requests", number: 4, name: "AccessesThisSlot", type: "accesses" }
+      @extended_metrics << { table: "Requests", number: 5, name: "WorkerModeOfOperation", type: "workers" }
+      @extended_metrics << { table: "Requests", number: 6, name: "CPUUsage", type: "sec" }
+      @extended_metrics << { table: "Requests", number: 7, name: "SecSinceLastRequest", type: "sec" }
+      @extended_metrics << { table: "Requests", number: 8, name: "LastRequestProcessTime", type: "ms" }
+      @extended_metrics << { table: "Requests", number: 9, name: "KilobytesTransferredThisConnection", type: "kb" }
+      @extended_metrics << { table: "Requests", number: 10, name: "MegabytesTransferredThisChild", type: "mb" }
+      @extended_metrics << { table: "Requests", number: 11, name: "MegabytesTransferredThisSlot", type: "mb" }
+      @extended_metrics << { table: "Requests", number: 12, name: "ClientIP", type: "string" }
+      @extended_metrics << { table: "Requests", number: 13, name: "VHost", type: "string" }
+      @extended_metrics << { table: "Requests", number: 14, name: "RequestContents", type: "string" }
+      @reqarray = ["PID", "VHost"]
+
+      @extended_metrics << { table: "WebServers", number: 0, name: "PID", type: "string" }
+      @extended_metrics << { table: "WebServers", number: 1, name: "ConnectionsTotal", type: "connections" }
+      @extended_metrics << { table: "WebServers", number: 2, name: "ConnectionsAccepting", type: "boolean" }
+      @extended_metrics << { table: "WebServers", number: 3, name: "ThreadsBusy", type: "threads" }
+      @extended_metrics << { table: "WebServers", number: 4, name: "ThreadsIdle", type: "threads" }
+      @extended_metrics << { table: "WebServers", number: 5, name: "AsyncConnsWriting", type: "connections" }
+      @extended_metrics << { table: "WebServers", number: 6, name: "AsyncConnsKeepAlive", type: "connections" }
+      @extended_metrics << { table: "WebServers", number: 7, name: "AsyncConnsClosing", type: "connections" }

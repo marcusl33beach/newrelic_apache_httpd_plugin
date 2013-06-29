@@ -1,0 +1,90 @@
+@@metricarray << { table: "sslcache", number: 1, name: "CacheType", type: "string" }
+@@metricarray << { table: "sslcache", number: 2, name: "SharedMemory", type: "bytes" }
+@@metricarray << { table: "sslcache", number: 3, name: "CurrentEntries", type: "entries" }
+@@metricarray << { table: "sslcache", number: 4, name: "Subcaches", type: "subcaches" }
+@@metricarray << { table: "sslcache", number: 5, name: "IndexesPerSubCache", type: "indexes" }
+@@metricarray << { table: "sslcache", number: 6, name: "TimeLeftOnOldestEntriesObjects", type: "sec" }
+@@metricarray << { table: "sslcache", number: 7, name: "IndexUsage", type: "uses" }
+@@metricarray << { table: "sslcache", number: 8, name: "CacheUsage", type: "uses" }
+@@metricarray << { table: "sslcache", number: 9, name: "TotalEntriesStored", type: "entries" }
+@@metricarray << { table: "sslcache", number: 10, name: "TotalEntriesReplaced", type: "entries" }
+@@metricarray << { table: "sslcache", number: 11, name: "TotalEntriesExpired", type: "entries" }
+@@metricarray << { table: "sslcache", number: 12, name: "TotalEntriesScrolledOut", type: "entries" }
+@@metricarray << { table: "sslcache", number: 13, name: "TotalRetrievesHit", type: "hits" }
+@@metricarray << { table: "sslcache", number: 14, name: "TotalRetrievesMiss", type: "misses" }
+@@metricarray << { table: "sslcache", number: 15, name: "TotalRemovesHit", type: "hits" }
+@@metricarray << { table: "sslcache", number: 16, name: "TotalRemovesMis", type: "misses" }
+
+## SSL Cache Table
+1: Cache Type (this is a string)
+2: Shared Memory (bytes)
+3: Current Entries
+4: Subcaches
+5: Indexes Per Subcache
+6: Time left on oldest entries' objects (average - seconds)
+7: Index Usage
+8: Cache Usage
+9: total entries stored since starting
+10: total entries replaced since starting
+11: total entries expired since starting
+12: total (pre-expiry) entries scrolled out of the cache
+13: total retrieves since starting (hit)
+14: total retrieves since starting (miss)
+15: total removes since starting (hit)
+16: total removes since starting (miss)
+
+@@metricarray << { table: "requests", number: 1, name: "ChildServerNumber", type: "string" }
+@@metricarray << { table: "requests", number: 2, name: "PID", type: "string" }
+@@metricarray << { table: "requests", number: 3, name: "AccessesThisConnection", type: "accesses" }
+@@metricarray << { table: "requests", number: 4, name: "AccessesThisChild", type: "accesses" }
+@@metricarray << { table: "requests", number: 5, name: "AccessesThisSlot", type: "accesses" }
+@@metricarray << { table: "requests", number: 6, name: "WorkerModeOfOperation", type: "workers" }
+@@metricarray << { table: "requests", number: 7, name: "CPUUsage", type: "sec" }
+@@metricarray << { table: "requests", number: 8, name: "SecSinceLastRequest", type: "sec" }
+@@metricarray << { table: "requests", number: 9, name: "LastRequestProcessTime", type: "ms" }
+@@metricarray << { table: "requests", number: 10, name: "KilobytesTransferredThisConnection", type: "kb" }
+@@metricarray << { table: "requests", number: 11, name: "MegabytesTransferredThisChild", type: "mb" }
+@@metricarray << { table: "requests", number: 12, name: "MegabytesTransferredThisSlot", type: "mb" }
+@@metricarray << { table: "requests", number: 13, name: "ClientIP", type: "string" }
+@@metricarray << { table: "requests", number: 14, name: "VHost", type: "string" }
+@@metricarray << { table: "requests", number: 15, name: "RequestContents", type: "string" }
+
+## Requests Table
+1: Child Server number - generation
+2: OS process ID
+3: Number of accesses - this connection
+4: Number of accesses - this child
+5: Number of accesses - this slot
+6: Worker mode of operation
+7: CPU usage, number of seconds
+8: Seconds since beginning of most recent request
+9: Milliseconds required to process most recent request
+10: Kilobytes transferred this connection
+11: Megabytes transferred this child
+12: Total megabytes transferred this slot
+13: Client IP (if available)
+14: Virtual Host & Port (if available)
+15: Request Contents (if available)
+
+@@metricarray << { table: "webservers", number: 1, name: "PID", type: "string" }
+@@metricarray << { table: "webservers", number: 2, name: "ConnectionsTotal", type: "connections" }
+@@metricarray << { table: "webservers", number: 3, name: "ConnectionsAccepting", type: "boolean" }
+@@metricarray << { table: "webservers", number: 4, name: "ThreadsBusy", type: "threads" }
+@@metricarray << { table: "webservers", number: 5, name: "ThreadsIdle", type: "threads" }
+@@metricarray << { table: "webservers", number: 6, name: "AsyncConnsWriting", type: "connections" }
+@@metricarray << { table: "webservers", number: 7, name: "AsyncConnsKeepAlive", type: "connections" }
+@@metricarray << { table: "webservers", number: 8, name: "AsyncConnsClosing", type: "connections" }
+
+### Web Servers (by PID) Table
+1: PID
+2: Connections Total
+3: Connections Accepting (yes/no)
+4: Threads Busy
+5: Threads Idle
+6: AsyncConns Writing
+7: AsyncConns Keep-Alive
+8: AsyncConns Closing
+
+### VHosts Seconds Since Last Used Table
+1. VHost & Port
+2: Seconds Since Last Used
