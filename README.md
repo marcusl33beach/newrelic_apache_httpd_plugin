@@ -23,9 +23,9 @@ New Relic Plugin for Apache HTTPD
 * The current version of this extension does not support authentication with mod_status.
 * Set "debug: true" in newrelic_plugin.yml to see the metrics logged to stdout instead of sending them to New Relic.
 
-### IMPORANT - If you want to use the Remote JMX plugin:
+### **IMPORANT** - If you want to use the Remote JMX plugin:
 
-* You *MUST* set `pluginname="your.arbitrary.name.here"` in `application.conf`, in order to setup custom dashboards and summary metrics. *If you leave the default, then it will appear with a default dashboard, which can't be edited and won't be presenting your JMX counters.*
+* **You MUST set `pluginname="your.arbitrary.name.here"` in `application.conf`, in order to setup custom dashboards and summary metrics. _If you leave the default, then it will appear with a default dashboard, which can't be edited and won't be presenting your JMX counters._**
 * Once you set your own plugin name and it reports in as a new plugin, you'll need to create dashboards and summary metrics to expose your JMX counters. The New Relic Docs offer the best explanation of these capabilities:
   - https://docs.newrelic.com/docs/plugin-dev/changing-plugin-settings
   - https://docs.newrelic.com/docs/plugin-dev/creating-summary-metrics-for-plugins
